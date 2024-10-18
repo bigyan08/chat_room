@@ -1,14 +1,13 @@
 from django.shortcuts import render
+from .models import Room
 
 # Create your views here.
-rooms =[
-    {'id':1,'name':'lets learn py'},
-    {'id':2,'name':'lets learn api'},
-    {'id':3,'name':'lets learn design'},
-]
 def index(request):
+    rooms = Room.objects.all()
     context = {'rooms':rooms}
     return render(request,'chatapp/home.html',context)
 
 def room(request,pk):
-    return render(request,'chatapp/room.html')
+    room = Room.objects.get(id=pk)
+    context = {'room':room} 
+    return render(request,'chatapp/room.html',context)
