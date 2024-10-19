@@ -19,6 +19,9 @@ class Room(models.Model):
     updated = models.DateTimeField(auto_now=True) # auto_now picks the time when the new data gets updated
     created = models.DateTimeField(auto_now_add=True) # whereas, auto_now_add saves the time when the data is created, hence it stays same for a particular data.
 
+    class Meta:
+        ordering = ['-updated','-created']
+
     def __str__(self):
         return self.name
 
