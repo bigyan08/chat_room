@@ -7,9 +7,14 @@
 </head>
 <body>
     <nav>
-    <p>this is navbar</p>
-    <hr>
+        <h4><a href="{% url 'index'%}">Logo</a></h4>
+        
+        <form action="{% url 'index' %}" method="GET">
+            <!-- we donot need csrf token for get method forms -->
+             <input type="text" name="q" placeholder="Search...">
+        </form>
     </nav>
+    <hr>
     {% block content %}
 
     {% endblock %}
