@@ -4,7 +4,7 @@ from django.db.models import Q
 from .models import Room, Topic
 from .forms import RoomForm
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 def index(request):
@@ -79,3 +79,8 @@ def loginPage(request):
             messages.error(request,'Invalid Username or Password')
     context = {}
     return render(request,'chatapp/login_register.html',context)
+
+def logoutUser(request):
+    logout(request)
+    return redirect('index')
+
