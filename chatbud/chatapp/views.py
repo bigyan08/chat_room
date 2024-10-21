@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.db.models import Q
 from .models import Room, Topic
 from .forms import RoomForm
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 # Create your views here.
 def index(request):
@@ -54,3 +57,25 @@ def deleteRoom(request,pk):
         room.delete()
         return redirect('index')
     return render(request,'chatapp/delete.html',{'obj':room})
+
+
+def loginPage(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        #checking if the user exists
+        try:
+            user = User.objects.get(username=username)
+        except:
+            messages.error(request,'User doesnot exist!')
+
+        user = authenticate(request, username=username,password=password)
+
+        if user is not None:
+            login(request,user)
+            return redirect('index')
+        else:
+            messages.error(request,'Invalid Username or Password')
+    context = {}
+    return render(request,'chatapp/login_register.html',context)

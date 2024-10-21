@@ -13,7 +13,20 @@
             <!-- we donot need csrf token for get method forms -->
              <input type="text" name="q" placeholder="Search...">
         </form>
+
+        <div>
+            <a href="{% url 'login' %}">Login</a>
+        </div>
     </nav>
+
+    <!-- flash messages -->
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li>{{message}}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
     <hr>
     {% block content %}
 
