@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 from django.db.models import Q
-from .models import Room, Topic
+from .models import Room, Topic, Message
 from .forms import RoomForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -27,12 +27,23 @@ def index(request):
 def room(request,pk):
     room = Room.objects.get(id=pk)
     room_messages = room.message_set.all().order_by('-created') #basically we are saying to give the child messages of the parent room
-    context = {'room':room,'room_messages':room_messages} 
+    participants = room.participants.all()
+
+    if request.method == "POST":
+        message=Message.objects.create(
+            user=request.user,
+            room=room,
+            body=request.POST.get('body'),#getting the body of the input form with name 'body'.
+        )
+        room.participants.add(request.user)
+        return redirect('room',pk=room.id)
+
+    context = {'room':room,'room_messages':room_messages,'participants':participants} 
     return render(request,'chatapp/room.html',context)
 
 #now we are gonna create CRUD functionalities for the user to create room connecting to room_form template.
 @login_required(login_url='login')
-def createRoom(request):
+def createRoom(request,pk):
     form = RoomForm()
     if request.method == "POST":
         form = RoomForm(request.POST)
@@ -115,3 +126,14 @@ def registerPage(request):
             messages.error(request,'User registration invalid!')
     context= {'form':form}
     return render(request,'chatapp/login_register.html',context)
+
+@login_required(login_url='login')
+def deleteMessage(request,pk):
+    message = Message.objects.get(id=pk)
+    if request.user != message.user:
+        return HttpResponse('You are not allowed here!')
+    if request.method == "POST":
+        message.delete()
+        return redirect('index')
+    return render(request,'chatapp/delete.html',{'obj':message})
+

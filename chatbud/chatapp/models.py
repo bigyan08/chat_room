@@ -15,7 +15,7 @@ class Room(models.Model):
     topic = models.ForeignKey(Topic,on_delete=models.SET_NULL,null=True)
     name = models.CharField(max_length=200)
     description = models.TextField(null=True)
-    #participants
+    participants = models.ManyToManyField(User,related_name='participants',blank=True) # here host is already connecting with User, so we give a related name to use.
     updated = models.DateTimeField(auto_now=True) # auto_now picks the time when the new data gets updated
     created = models.DateTimeField(auto_now_add=True) # whereas, auto_now_add saves the time when the data is created, hence it stays same for a particular data.
 
