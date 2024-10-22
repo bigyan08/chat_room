@@ -26,7 +26,8 @@ def index(request):
 
 def room(request,pk):
     room = Room.objects.get(id=pk)
-    context = {'room':room} 
+    room_messages = room.message_set.all().order_by('-created') #basically we are saying to give the child messages of the parent room
+    context = {'room':room,'room_messages':room_messages} 
     return render(request,'chatapp/room.html',context)
 
 #now we are gonna create CRUD functionalities for the user to create room connecting to room_form template.
