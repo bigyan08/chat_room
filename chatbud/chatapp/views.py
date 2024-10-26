@@ -46,15 +46,19 @@ def room(request,pk):
 @login_required(login_url='login')
 def createRoom(request):
     form = RoomForm()
+    topics = Topic.objects.all()
     if request.method == "POST":
-        form = RoomForm(request.POST)
-        if form.is_valid():
-            room = form.save(commit=False)
-            room.host = request.user
-            room.save()
-            return redirect('index')
+        topic_name = request.POST.get('topic')
+        topic, created = Topic.objects.get_or_create(name=topic_name) # this basically means when a user selects the already existent topic then created becomes false but if user enters new topic then it gets in created variable
+        Room.objects.create(
+            host = request.user,
+            topic= topic,
+            name = request.POST.get('name'),
+            description = request.POST.get('description')
+        )
+        return redirect('index')
 
-    context = {'form':form}
+    context = {'form':form, 'topics':topics}
     return render(request,'chatapp/room_form.html',context)
 
 
@@ -62,15 +66,19 @@ def createRoom(request):
 def updateRoom(request,pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
+    topics = Topic.objects.all()
     # till now anybody can just enter the id of the room and update. we must ensure that only room user can do so.
     if request.user != room.host:
         return HttpResponse("You are not allowed to do so.") 
     if request.method == "POST":
-        form = RoomForm(request.POST,instance=room)
-        if form.is_valid():
-            form.save()
-            return redirect('index')
-    context = {'form':form}
+        topic_name = request.POST.get('topic')
+        topic, created = Topic.objects.get_or_create(name=topic_name) # this basically means when a user selects the already existent topic then created becomes false but if user enters new topic then it gets in created variable
+        room.name = request.POST.get('name')
+        room.description = request.POST.get('description')
+        room.topic = topic
+        room.save() 
+        return redirect('index')
+    context = {'form':form , 'topics':topics, 'room':room}
     return render(request,'chatapp/room_form.html',context)
 
 @login_required(login_url='login')
