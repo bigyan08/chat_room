@@ -21,7 +21,7 @@ def index(request):
     ) 
     room_count = rooms.count()
     room_messages= Message.objects.filter(Q(room__topic__name__icontains=q)) #this will make sure that the activity field contains the activities related to those topics only
-    topics = Topic.objects.all()
+    topics = Topic.objects.all()[0:3]
     context = {'rooms':rooms, 'topics':topics, 'room_count':room_count,'room_messages':room_messages}
     return render(request,'chatapp/home.html',context)
 
@@ -167,3 +167,8 @@ def updateUser(request):
             return redirect('user-profile', pk=user.id)
     return render(request,'chatapp/update-user.html', {'form':form})
     
+
+def topicsPage(request):
+    q=request.GET.get('q') if request.GET.get('q') != None else ''
+    topics= Topic.objects.filter(name__icontains=q)
+    return render(request,'chatapp/topics.html',{'topics':topics})
