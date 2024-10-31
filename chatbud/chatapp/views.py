@@ -3,9 +3,8 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.db.models import Q
 from .models import Room, Topic, Message, User
-from .forms import RoomForm, UserForm
+from .forms import RoomForm, UserForm,MyUserCreationForm
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required #this decorator is used to restrict some of the pages from accessing without loggin in, like creating and updating rooms and redirecting them to the login or singup page.
 
 # Create your views here.
@@ -90,30 +89,28 @@ def deleteRoom(request,pk):
 
 
 def loginPage(request):
-    
     page= 'login'
-    
     #we need to make sure that if the user is already logged in then redirect them to home
     if request.user.is_authenticated:
         return redirect('index')
     
     if request.method == "POST":
-        username = request.POST.get('username').lower()
+        email = request.POST.get('email').lower()
         password = request.POST.get('password')
 
         #checking if the user exists
         try:
-            user = User.objects.get(username=username)
+            user = User.objects.get(email=email)
         except:
             messages.error(request,'User doesnot exist!')
 
-        user = authenticate(request, username=username,password=password)
+        user = authenticate(request, email=email,password=password)
 
         if user is not None:
             login(request,user)
             return redirect('index')
         else:
-            messages.error(request,'Invalid Username or Password')
+            messages.error(request,'Invalid email or Password')
     context = {'page':page}
     return render(request,'chatapp/login_register.html',context)
 
@@ -122,9 +119,9 @@ def logoutUser(request):
     return redirect('index')
 
 def registerPage(request):
-    form = UserCreationForm()
+    form = MyUserCreationForm()
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = MyUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False) # we dont want to create the user right away to lowercase the username.
             user.username = user.username.lower()
@@ -160,7 +157,7 @@ def updateUser(request):
     user = request.user
     form = UserForm(instance=user)
     if request.method == "POST":
-        form = UserForm(request.POST,instance=user)
+        form = UserForm(request.POST,request.FILES,instance=user)
         if form.is_valid():
             form.save()
             return redirect('user-profile', pk=user.id)
