@@ -2,7 +2,7 @@
     "routes":[
         {
             "src":"/(.*)",
-            "dest":"chatbud/chatbud/wsgi.py"
+            "dest":"chatbud/wsgi.py"
         }
     ]
 }
