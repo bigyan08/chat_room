@@ -1,1 +1,1 @@
-web: gunicorn chatbud.chatbud.wsgi:application
+web: gunicorn chatbud.wsgi:application
