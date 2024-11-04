@@ -1,1 +1,1 @@
-web: gunicorn chatbud.chatbud.wsgi:application
+web: PYTHONPATH=${PYTHONPATH}:chatbud gunicorn chatbud.chatbud.wsgi:application
