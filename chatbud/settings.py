@@ -86,11 +86,11 @@ WSGI_APPLICATION = 'chatbud.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ['DB_NAME'],  # Replace with your actual database name from Supabase
-        'USER': os.environ['DB_USER'],  # Replace with your Supabase username
-        'PASSWORD': os.environ['DB_PASSWORD'],  # Replace with your Supabase password
-        'HOST': os.environ['DB_HOST'],  # Replace with your Supabase host
-        'PORT': os.environ['PORT'],  # Default PostgreSQL port
+        'NAME': os.environ['dbname'],  # Replace with your actual database name from Supabase
+        'USER': os.environ['user'],  # Replace with your Supabase username
+        'PASSWORD': os.environ['password'],  # Replace with your Supabase password
+        'HOST': os.environ['host'],  # Replace with your Supabase host
+        'PORT': os.environ['port'],  # Default PostgreSQL port
     }
 }
 
